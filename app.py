@@ -4,9 +4,14 @@ Flask web app for phishing email detection.
 import os
 import tempfile
 from flask import Flask, render_template, request, jsonify
+from dotenv import load_dotenv
+
 from phishing_detector import parse_email, format_email, classify_email
 from azure.ai.inference import ChatCompletionsClient
 from azure.core.credentials import AzureKeyCredential
+
+# Load .env file for environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
