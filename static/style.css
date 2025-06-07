@@ -1,0 +1,9 @@
+/* Custom styles for HookSnare */
+.card-centered {
+    max-width: 600px;
+    margin: auto;
+}
+
+.preview-box {
+    white-space: pre-wrap;
+}
