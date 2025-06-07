@@ -15,7 +15,16 @@
           <h2 class="mb-0">Analysis Result</h2>
         </div>
         <div class="card-body">
-          <p class="h4">Classification: <span class="badge bg-info text-dark">{{ classification }}</span></p>
+          <p class="h4">Classification: 
+            <span class="badge
+              {% set cls = classification.lower() %}
+              {% if 'phishing' in cls %} bg-danger
+              {% elif 'unsure' in cls %} bg-warning text-dark
+              {% else %} bg-success
+              {% endif %}">
+              {{ classification }}
+            </span>
+          </p>
           <p class="mt-3"><strong>Reason:</strong> {{ reason }}</p>
           {% if advice %}
             <p><strong>Advice:</strong> {{ advice }}</p>
