@@ -1,0 +1,36 @@
+# Git & Version Control
+.git
+.gitignore
+.gitattributes
+
+# Documentation & Config
+README.md
+docs/
+*.md
+
+# Environment & Secrets
+.env
+
+# Python
+__pycache__/
+.venv/
+venv/
+
+# Logs & Runtime
+*.log
+logs/
+
+# OS & System Files
+.DS_Store
+Thumbs.db
+
+# IDE & Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker & Build Files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
