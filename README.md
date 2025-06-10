@@ -35,7 +35,7 @@ docker run -d \
   --restart unless-stopped \
   --env-file .env \
   -v $(pwd)/logs:/app/logs \
-  ghcr.io/Hamster45105/phishfish:latest
+  ghcr.io/hamster45105/phishfish:latest
 ```
 
 ### View Logs

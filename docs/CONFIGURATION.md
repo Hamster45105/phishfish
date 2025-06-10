@@ -106,5 +106,3 @@ NTFY_ON=phishing
 NTFY_ON=phishing,legitimate
 
 ```
-
----
