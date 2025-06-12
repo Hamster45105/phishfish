@@ -22,11 +22,10 @@ PhishFish monitors your email in real-time and uses free access to the GitHub mo
 mkdir phishfish && cd phishfish
 
 # 2. Download configuration template
-curl -o .env.example https://raw.githubusercontent.com/Hamster45105/phishfish/main/.env.example
+curl -o .env https://raw.githubusercontent.com/Hamster45105/phishfish/main/.env.example
 
 # 3. Configure your settings
-cp .env.example .env
-nano .env  # Edit with your settings
+nano .env 
 
 # 4. Create logs directory and run
 mkdir logs
@@ -34,7 +33,6 @@ docker run -d \
   --name phishfish \
   --restart unless-stopped \
   --env-file .env \
-  -v $(pwd)/logs:/app/logs \
   ghcr.io/hamster45105/phishfish:latest
 ```
 

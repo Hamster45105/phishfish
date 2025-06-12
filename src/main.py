@@ -30,16 +30,6 @@ if dotenv_path.exists():
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
 
-# File logging setup with today's date
-today = datetime.now().strftime('%Y-%m-%d')
-LOG_FILE = f'logs/{today}.log'
-# Ensure logs directory exists
-os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
-file_handler = logging.FileHandler(LOG_FILE)
-file_handler.setLevel(logging.INFO)
-file_handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
-logging.getLogger().addHandler(file_handler)
-
 # IMAP settings
 IMAP_HOST = os.environ['IMAP_HOST']
 IMAP_USER = os.environ['IMAP_USER']
