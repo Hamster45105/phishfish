@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -57,4 +57,3 @@ jobs:
         draft: true
         files: |
           .env.example
-          docker-compose.yml
