@@ -40,15 +40,10 @@ docker run -d \
 ```bash
 # Follow container logs
 docker logs -f phishfish
-
-# Or view log file directly
-tail -f logs/$(date +%Y-%m-%d).log
 ```
 
 ## Example Notification
 ```
-PhishFish Email Report
-
 SENDER: "security@amaz0n.com"
 
 SUBJECT: "Urgent: Verify Your Account"

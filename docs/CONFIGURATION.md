@@ -6,7 +6,7 @@ This guide explains all of the different configuration options available in your
 
 ### Azure AI Configuration
 
-StopThePhish uses Azure AI (via GitHub Models) to classify emails as legitimate or phishing.
+PhishFish uses Azure AI (via GitHub Models) to classify emails as legitimate or phishing.
 
 GitHub models is free for all users, but with [rate limits](https://docs.github.com/en/github-models/use-github-models/prototyping-with-ai-models#rate-limits)
 
@@ -15,13 +15,6 @@ GitHub models is free for all users, but with [rate limits](https://docs.github.
 | `GITHUB_TOKEN` | ⚠️ | *None* | Your GitHub personal access token with model access |
 | `AZURE_MODEL` | ❌ | `openai/gpt-4.1` | AI model to use for email classification |
 | `AZURE_ENDPOINT` | ❌ | `https://models.github.ai/inference` | Azure AI inference endpoint |
-
-**Example:**
-```bash
-GITHUB_TOKEN=your_token_here
-AZURE_MODEL=openai/gpt-4o
-AZURE_ENDPOINT=https://models.github.ai/inference
-```
 
 #### Getting a GitHub Token
 1. Go to [GitHub Settings > Developer settings > Personal access tokens > Fine-grained tokens > Generate new token](https://github.com/settings/personal-access-tokens/new)
@@ -43,6 +36,7 @@ Configure your email server connection to monitor for new emails.
 | `IMAP_AUTH_METHOD` | ❌ | `SSL` | Authentication method: `SSL`, `STARTTLS`, or `PLAIN` |
 | `MAILBOX` | ❌ | `INBOX` | Mailbox folder to monitor for new emails |
 
+#### Known Email Settings
 
 <details>
 <summary><strong>Gmail</strong></summary>
@@ -68,22 +62,14 @@ MAILBOX=INBOX
 
 ### Notification Settings
 
-StopThePhish sends notifications via [ntfy.sh](https://ntfy.sh) when phishing emails are detected.
+PhishFish sends notifications via [ntfy.sh](https://ntfy.sh) when phishing emails are detected.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `NTFY_TOPIC` | ⚠️ | *None* | Your unique ntfy.sh topic name |
 | `NTFY_URL` | ❌ | `https://ntfy.sh/{TOPIC}` | Custom ntfy server URL |
 | `NTFY_TITLE` | ❌ | `PhishFish Email Report` | Title for NTFY notifications
-| `NTFY_ON` | ❌ | `phishing` | Which classifications to notify about |
-
-**Example:**
-```bash
-NTFY_TOPIC=my-stopthephish-alerts
-NTFY_TITLE=Phishing Alert
-NTFY_URL=https://myntfyserver.sh/
-NTFY_ON=phishing,scam
-```
+| `NOTIFY_ON` | ❌ | `phishing` | Which classifications to notify about |
 
 #### Setting Up Notifications
 
@@ -96,13 +82,13 @@ NTFY_ON=phishing,scam
 
 #### Notification Filtering
 
-Use `NTFY_ON` to control which email classifications trigger notifications:
+Use `NOTIFY_ON` to control which email classifications trigger notifications:
 
 ```bash
 # Notify only on phishing (default)
-NTFY_ON=phishing
+NOTIFY_ON=phishing
 
 # Notify on both phishing and legitimate emails
-NTFY_ON=phishing,legitimate
+NOTIFY_ON=phishing,legitimate
 
 ```
