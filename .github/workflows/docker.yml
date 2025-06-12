@@ -49,3 +49,12 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Create draft release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: PhishFish ${{ github.ref_name }}
+        draft: true
+        files: |
+          .env.example
+          docker-compose.yml
