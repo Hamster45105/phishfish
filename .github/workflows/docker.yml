@@ -55,5 +55,4 @@ jobs:
       with:
         name: PhishFish ${{ github.ref_name }}
         draft: true
-        files: |
-          .env.example
+
