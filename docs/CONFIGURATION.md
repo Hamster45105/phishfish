@@ -58,6 +58,13 @@ MAILBOX=INBOX
 - [Generate an app password](https://myaccount.google.com/apppasswords) (not your regular password)
 </details>
 
+<details>
+<summary><strong>Outlook</strong></summary>
+
+Currently, Outlook accounts are not supported, as [Microsoft does not support Basic Authentication](https://support.microsoft.com/en-us/office/modern-authentication-methods-now-needed-to-continue-syncing-outlook-email-in-non-microsoft-email-apps-c5d65390-9676-4763-b41f-d7986499a90d). Support for Modern Authentication may be added in the future.
+
+</details>
+
 ---
 
 ### Notification Settings
