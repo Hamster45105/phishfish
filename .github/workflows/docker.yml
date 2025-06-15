@@ -55,4 +55,18 @@ jobs:
       with:
         name: PhishFish ${{ github.ref_name }}
         draft: true
+        prerelease: true
+        generate_release_notes: true
+        body: |
+          **Welcome to PhishFish < insert > beta!**
+
+          > [!WARNING]
+          > This is a *beta* version as PhishFish is not yet stable and bugs are to be expected. 
+          > Configurations are not guaranteed to work between versions.
+          > Use with caution.
+
+          # Changelog
+
+          < insert >
+
 

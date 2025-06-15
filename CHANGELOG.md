@@ -18,7 +18,7 @@
 
 # `v0.1.1-beta` (2025-06-10)
 
-- Improve build process to support multiple architecures
+- Improve build process to support multiple architectures
 
 **Full Changelog**: https://github.com/Hamster45105/phishfish/compare/v0.1.0-beta...v0.1.1-beta
 
