@@ -1,4 +1,4 @@
-azure-ai-inference
-IMAPClient
-python-dotenv
-requests
+azure-ai-inference==1.0.0b9
+IMAPClient==3.0.1
+python-dotenv==1.0.1
+requests==2.32.4
