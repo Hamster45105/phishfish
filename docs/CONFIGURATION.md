@@ -69,19 +69,19 @@ Currently, Outlook accounts are not supported, as [Microsoft does not support Ba
 
 ### Notification Settings
 
-PhishFish can send notifications via [ntfy.sh](https://ntfy.sh) when phishing emails are detected.
+PhishFish can send notifications via [ntfy.sh](https://ntfy.sh) when phishing emails are detected. A notification will only be sent if `NTFY_TOPIC` is set.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `NTFY_TOPIC` | ❌ | *None* | Your unique ntfy.sh topic name |
+| `NTFY_TOPIC` | ❌ | *None* | Your unique ntfy topic name |
 | `NTFY_URL` | ❌ | `https://ntfy.sh` | Custom ntfy server URL (no trailing slash) |
-| `NTFY_TITLE` | ❌ | `PhishFish Email Report` | Title for NTFY notifications
+| `NTFY_TITLE` | ❌ | `PhishFish Email Report` | Title for ntfy notifications
 | `NOTIFY_ON` | ❌ | `phishing` | Which classifications to notify about |
 
 #### Setting Up Notifications
 
-1. **Choose a unique topic name** (e.g., `john-phishing-alerts-2024`)
-2. **Install ntfy app** on your phone:
+1. **Choose a unique topic name**
+2. **Install the ntfy app** on your phone:
    - [Android](https://play.google.com/store/apps/details?id=io.heckel.ntfy)
    - [iOS](https://apps.apple.com/us/app/ntfy/id1625396347)
 3. **Subscribe to your topic** in the app
@@ -107,6 +107,8 @@ NOTIFY_ON=phishing,legitimate
 PhishFish can move detected phishing emails to a specified folder if you wish. 
 
 Folders often have different names on the server to what you may be expecting. All available folders are displayed in the log when you start up PhishFish.
+
+Emails will only be moved if `MOVE_TO_FOLDER` is set.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
