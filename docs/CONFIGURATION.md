@@ -94,8 +94,10 @@ NOTIFY_ON=phishing,legitimate
 ```
 ### Moving Email Settings
 
-PhishFish can move detected phishing emails to a specified folder if you wish.
+PhishFish can move detected phishing emails to a specified folder if you wish. 
+
+Folders often have different names on the server to what you may be expecting. All available folders are displayed in the log when you start up PhishFish.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `MOVE_TO_FOLDER` | ❌ | *None* | The folder to move detected phishing emails to. All available folders are displayed in the logs when run |
+| `MOVE_TO_FOLDER` | ❌ | *None* | The folder to move detected phishing emails to. |

@@ -1,4 +1,4 @@
-# 🐟 PhishFish
+# PhishFish
 
 <p align="center">
   <img src=".github/banner.png" alt="PhishFish Icon" height="80" style="float:left; margin-right: 20px;">
@@ -28,7 +28,26 @@ curl -o .env https://raw.githubusercontent.com/Hamster45105/phishfish/main/.env.
 nano .env 
 
 # 4. Create logs directory and run
-mkdir logs
+docker run -d \
+  --name phishfish \
+  --restart unless-stopped \
+  --env-file .env \
+  ghcr.io/hamster45105/phishfish:latest
+```
+
+[Configuring your .env file](docs/CONFIGURATION.md) ● [Changelog](CHANGELOG.md)
+
+### Updating
+
+```bash
+# Remove old container
+docker stop phishfish
+docker rm phishfish
+
+# Pull new image
+docker pull ghcr.io/hamster45105/phishfish:latest
+
+# Re-run
 docker run -d \
   --name phishfish \
   --restart unless-stopped \
@@ -57,4 +76,4 @@ ADVICE: Ignore the email, delete it, or do not click any links.
 
 ## ⚙️ Configuration
 
-See [CONFIGURATION.md](docs/CONFIGURATION.md) for detailed setup instructions.
+
