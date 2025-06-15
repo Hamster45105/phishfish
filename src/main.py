@@ -40,7 +40,9 @@ MAILBOX = os.getenv('IMAP_MAILBOX', 'INBOX')
 
 # NTFY settings
 NTFY_TOPIC = os.environ['NTFY_TOPIC']
-NTFY_URL = os.getenv('NTFY_URL', f'https://ntfy.sh/{NTFY_TOPIC}')
+NTFY_URL = os.getenv('NTFY_URL', 'https://ntfy.sh')
+NTFY_URL = f'{NTFY_URL}/{NTFY_TOPIC}'
+
 NTFY_TITLE = os.getenv('NTFY_TITLE', 'PhishFish Email Report')
 NOTIFY_ON = [c.strip().lower() for c in os.getenv('NOTIFY_ON', 'phishing').split(',')]
 

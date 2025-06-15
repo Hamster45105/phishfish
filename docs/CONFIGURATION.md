@@ -67,7 +67,7 @@ PhishFish sends notifications via [ntfy.sh](https://ntfy.sh) when phishing email
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `NTFY_TOPIC` | ⚠️ | *None* | Your unique ntfy.sh topic name |
-| `NTFY_URL` | ❌ | `https://ntfy.sh/{TOPIC}` | Custom ntfy server URL |
+| `NTFY_URL` | ❌ | `https://ntfy.sh/{TOPIC}` | Custom ntfy server URL (no trailing slash) |
 | `NTFY_TITLE` | ❌ | `PhishFish Email Report` | Title for NTFY notifications
 | `NOTIFY_ON` | ❌ | `phishing` | Which classifications to notify about |
 
