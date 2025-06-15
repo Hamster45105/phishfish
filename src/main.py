@@ -275,18 +275,34 @@ if __name__ == '__main__':
             logging.error("Failed to initialize: %s", e)
             sys.exit(1)
 
-        # Main IDLE loop with exponential back-off
+        # Main IDLE loop with exponential back-off and connection management
         backoff = 5
         max_backoff = 300
+        idle_timeout = 120
+        last_noop = time.time()
+        noop_interval = 600
 
         try:
             while True:
                 try:
+                    # Send periodic NOOP to keep connection alive
+                    if time.time() - last_noop > noop_interval:
+                        try:
+                            imap_client.noop()
+                            last_noop = time.time()
+                            logging.debug("Sent NOOP keepalive")
+                        except Exception as noop_error:
+                            logging.warning("NOOP keepalive failed: %s", noop_error)
+                            raise noop_error  # Trigger reconnection
+
                     logging.info("Entering IMAP IDLE")
                     imap_client.idle()
-                    responses = imap_client.idle_check(timeout=300)
+                    responses = imap_client.idle_check(timeout=idle_timeout)
                     imap_client.idle_done()
-                    logging.info("IDLE returned responses: %s", responses)
+                    logging.debug("IDLE returned responses: %s", responses)
+
+                    # Reset backoff on successful IDLE
+                    backoff = 5
 
                     for resp in responses:
                         if isinstance(resp, tuple) and len(resp) > 1 and resp[1] == b'EXISTS':
@@ -295,9 +311,32 @@ if __name__ == '__main__':
                             break
 
                 except Exception as e:
-                    logging.error("Error in IDLE loop: %s; backing off %ds", e, backoff)
+                    logging.error("Error in IDLE loop: %s; reconnecting in %ds", e, backoff)
+                    
+                    # Close old connection
+                    try:
+                        imap_client.logout()
+                    except:
+                        pass
+                    
                     time.sleep(backoff)
                     backoff = min(backoff * 2, max_backoff)
+                    
+                    # Reconnect
+                    try:
+                        if IMAP_AUTH_METHOD == 'SSL':
+                            imap_client = IMAPClient(IMAP_HOST, port=IMAP_PORT, ssl=True)
+                        elif IMAP_AUTH_METHOD == 'STARTTLS':
+                            imap_client = IMAPClient(IMAP_HOST, port=IMAP_PORT, ssl=False)
+                            imap_client.starttls()
+                        else:
+                            imap_client = IMAPClient(IMAP_HOST, port=IMAP_PORT, ssl=False)
+                        imap_client.login(IMAP_USER, IMAP_PASS)
+                        imap_client.select_folder(MAILBOX)
+                        logging.info("Reconnected to IMAP server")
+                    except Exception as reconnect_error:
+                        logging.error("Failed to reconnect: %s", reconnect_error)
+                        
         except KeyboardInterrupt:
             logging.info("Received interrupt signal, shutting down...")
 
