@@ -54,8 +54,8 @@ MAILBOX=INBOX
 
 #### Tips
 
-- Enable 2-factor authentication
-- Generate an App Password (not your regular password)
+- Enable [2-factor authentication](https://support.google.com/accounts/answer/185839) for your account (required)
+- [Generate an app password](https://myaccount.google.com/apppasswords) (not your regular password)
 </details>
 
 ---
@@ -67,7 +67,7 @@ PhishFish can send notifications via [ntfy.sh](https://ntfy.sh) when phishing em
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `NTFY_TOPIC` | ❌ | *None* | Your unique ntfy.sh topic name |
-| `NTFY_URL` | ❌ | `https://ntfy.sh/{TOPIC}` | Custom ntfy server URL (no trailing slash) |
+| `NTFY_URL` | ❌ | `https://ntfy.sh` | Custom ntfy server URL (no trailing slash) |
 | `NTFY_TITLE` | ❌ | `PhishFish Email Report` | Title for NTFY notifications
 | `NOTIFY_ON` | ❌ | `phishing` | Which classifications to notify about |
 
