@@ -135,6 +135,9 @@ def classify_email(email_content):
 def notify_user(sender, subject, result):
     """Send a notification via ntfy.sh"""
 
+    if not NTFY_ENABLED:
+        return
+
     # Sanitize subject for headers (no CR/LF)
     clean_subject = subject.replace('\r', ' ').replace('\n', ' ').strip()
 
