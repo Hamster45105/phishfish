@@ -27,7 +27,7 @@ curl -o .env https://raw.githubusercontent.com/Hamster45105/phishfish/main/.env.
 # 3. Configure your settings
 nano .env 
 
-# 4. Create logs directory and run
+# 4. Run
 docker run -d \
   --name phishfish \
   --restart unless-stopped \
@@ -35,19 +35,19 @@ docker run -d \
   ghcr.io/hamster45105/phishfish:latest
 ```
 
-[Configuring your .env file](docs/CONFIGURATION.md) ● [Changelog](CHANGELOG.md)
+[Configuring your .env file](docs/CONFIGURATION.md) • [Changelog](CHANGELOG.md)
 
 ### Updating
 
 ```bash
-# Remove old container
+# 1. Stop and remove old container
 docker stop phishfish
 docker rm phishfish
 
-# Pull new image
+# 2. Pull new image
 docker pull ghcr.io/hamster45105/phishfish:latest
 
-# Re-run
+# 3. Re-run
 docker run -d \
   --name phishfish \
   --restart unless-stopped \
@@ -73,7 +73,3 @@ REASON: Suspicious sender domain and urgent language typical of phishing attempt
 
 ADVICE: Ignore the email, delete it, or do not click any links.
 ```
-
-## ⚙️ Configuration
-
-
