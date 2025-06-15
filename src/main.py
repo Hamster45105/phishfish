@@ -38,7 +38,7 @@ IMAP_PORT = int(os.getenv('IMAP_PORT', '993'))
 IMAP_AUTH_METHOD = os.getenv('IMAP_AUTH_METHOD', 'SSL').upper()
 MAILBOX = os.getenv('IMAP_MAILBOX', 'INBOX')
 
-# NTFY settings
+# ntfy settings
 NTFY_TOPIC = os.getenv('NTFY_TOPIC', '')
 NTFY_ENABLED = bool(NTFY_TOPIC.strip())
 
@@ -166,7 +166,7 @@ def notify_user(sender, subject, result):
     # Use double line breaks for separation
     message = '\n\n'.join(parts)
 
-    # Set ntfy.sh headers
+    # Set ntfy headers
     headers = {
         'Title': NTFY_TITLE,
     }
