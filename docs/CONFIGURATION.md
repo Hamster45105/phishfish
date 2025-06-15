@@ -99,6 +99,9 @@ NOTIFY_ON=phishing
 NOTIFY_ON=phishing,legitimate
 
 ```
+
+---
+
 ### Moving Email Settings
 
 PhishFish can move detected phishing emails to a specified folder if you wish. 
