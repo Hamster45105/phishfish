@@ -9,7 +9,6 @@ import os
 import json
 import re
 import sys
-from datetime import datetime
 
 from email.parser import BytesParser
 from email.header import decode_header
@@ -35,11 +34,17 @@ IMAP_HOST = os.environ['IMAP_HOST']
 IMAP_USER = os.environ['IMAP_USER']
 IMAP_PASS = os.environ['IMAP_PASS']
 IMAP_PORT = int(os.getenv('IMAP_PORT', '993'))
+
 IMAP_AUTH_METHOD = os.getenv('IMAP_AUTH_METHOD', 'SSL').upper()
 MAILBOX = os.getenv('IMAP_MAILBOX', 'INBOX')
 
 # NTFY settings
-NTFY_TOPIC = os.environ['NTFY_TOPIC']
+NTFY_TOPIC = os.getenv('NTFY_TOPIC', '')
+NTFY_ENABLED = bool(NTFY_TOPIC.strip())
+
+if not NTFY_ENABLED:
+    logging.warning("NTFY_TOPIC is not set, notifications will not be sent.")
+
 NTFY_URL = os.getenv('NTFY_URL', 'https://ntfy.sh')
 NTFY_URL = f'{NTFY_URL}/{NTFY_TOPIC}'
 
@@ -51,6 +56,13 @@ token = os.environ['GITHUB_TOKEN']
 model = os.getenv('AZURE_MODEL', 'openai/gpt-4.1')
 endpoint = os.getenv('AZURE_ENDPOINT', 'https://models.github.ai/inference')
 client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(token))
+
+# IMAP move settings
+MOVE_TO_FOLDER = os.getenv('MOVE_TO_FOLDER', '')
+IMAP_MOVE = bool(MOVE_TO_FOLDER.strip())
+
+if not IMAP_MOVE:
+    logging.warning("MOVE_TO_FOLDER is not set, emails will not be moved after processing.")
 
 def parse_email_bytes(raw_bytes):
     """Parse raw email bytes and return metadata, body, and URLs."""
@@ -166,6 +178,23 @@ def notify_user(sender, subject, result):
     except Exception as e:
         logging.error("Failed to send ntfy notification: %s", e)
 
+def move_email(imap_client, uid, result):
+    """Move email to a specified folder."""
+    if not IMAP_MOVE:
+        return
+
+    # result is a dict from classify_email
+    cls = result.get('classification','').lower()
+    # Skip moving if not phishing
+    if cls != 'phishing':
+        return
+    
+    try:
+        imap_client.move(uid, MOVE_TO_FOLDER)
+        logging.info("Moved UID %s to folder '%s'", uid, MOVE_TO_FOLDER)
+    except Exception as e:
+        logging.error("Failed to move UID %s to folder '%s': %s", uid, MOVE_TO_FOLDER, e)
+
 def process_single_email(imap_client, uid):
     """Process a single email UID - fetch, classify, and notify."""
     try:
@@ -198,6 +227,8 @@ def process_single_email(imap_client, uid):
             logging.info("UID %s processed and flagged: %s", uid, current_flags)
         except Exception as e:
             logging.warning("Could not flag UID %s as processed: %s - email may no longer exist", uid, e)
+
+        move_email(imap_client, uid, result)
 
     except Exception as e:
         logging.error("Error processing email UID %s: %s", uid, str(e))

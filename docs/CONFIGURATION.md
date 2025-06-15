@@ -62,11 +62,11 @@ MAILBOX=INBOX
 
 ### Notification Settings
 
-PhishFish sends notifications via [ntfy.sh](https://ntfy.sh) when phishing emails are detected.
+PhishFish can send notifications via [ntfy.sh](https://ntfy.sh) when phishing emails are detected.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `NTFY_TOPIC` | ⚠️ | *None* | Your unique ntfy.sh topic name |
+| `NTFY_TOPIC` | ❌ | *None* | Your unique ntfy.sh topic name |
 | `NTFY_URL` | ❌ | `https://ntfy.sh/{TOPIC}` | Custom ntfy server URL (no trailing slash) |
 | `NTFY_TITLE` | ❌ | `PhishFish Email Report` | Title for NTFY notifications
 | `NOTIFY_ON` | ❌ | `phishing` | Which classifications to notify about |
@@ -92,3 +92,10 @@ NOTIFY_ON=phishing
 NOTIFY_ON=phishing,legitimate
 
 ```
+### Moving Email Settings
+
+PhishFish can move detected phishing emails to a specified folder if you wish.
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `MOVE_TO_FOLDER` | ❌ | *None* | The folder to move detected phishing emails to. All available folders are displayed in the logs when run |
