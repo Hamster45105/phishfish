@@ -4,6 +4,12 @@ This guide explains all of the different configuration options available in your
 
 ## Configuration Variables
 
+### Logging Settings
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `LOG_LEVEL` | ❌ | `INFO` | One of `DEBUG`, `INFO`, `WARNING`, `ERROR` or `CRITICAL` |
+
 ### Azure AI Configuration
 
 PhishFish uses Azure AI (via GitHub Models) to classify emails as legitimate or phishing.

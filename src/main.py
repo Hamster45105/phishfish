@@ -27,7 +27,11 @@ if dotenv_path.exists():
     load_dotenv(dotenv_path=dotenv_path, override=True)
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+
+log_level = os.getenv('LOG_LEVEL', 'INFO').upper()
+if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+    raise ValueError(f"Invalid LOG_LEVEL: {log_level}. Must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL.")
+logging.basicConfig(level=getattr(logging, log_level), format='%(asctime)s [%(levelname)s] %(message)s')
 
 # IMAP settings
 IMAP_HOST = os.environ['IMAP_HOST']

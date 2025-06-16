@@ -1,5 +1,8 @@
 # v0.1.4-beta
 
+**New**
+- Add option to configure log level. (Update `LOG_LEVEL` in your .env file)
+
 **Improvements**
 
 - Improve connection management to IMAP server
