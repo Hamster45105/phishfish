@@ -1,15 +1,16 @@
 # v0.1.4-beta
 
 **New**
-- Add option to configure log level. (Update `LOG_LEVEL` in your .env file)
+- Added option to configure log level (udate `LOG_LEVEL` in your .env file)
 
-**Improvements**
+**Improved**
 
 - Improve connection management to IMAP server
 
-**Fixes**
+**Fixed**
 
 - Don't send notification if ntfy is disabled
+
 
 # v0.1.3-beta (2025-06-15)
 
