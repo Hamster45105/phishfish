@@ -9,6 +9,8 @@ import os
 import json
 import re
 import sys
+import traceback
+
 
 from email.parser import BytesParser
 from email.header import decode_header
@@ -112,16 +114,9 @@ def format_email(metadata, body, urls):
 
 def classify_email(email_content):
     """Use Azure AI to classify the email and return JSON result."""
-    system_prompt = (
-        "You are an assistant that classifies emails as legitimate or phishing. "
-        "Only use these two labels. Scam emails are counted as phishing. Provide a one-sentence reason. "
-        "Your job is not to determine if the email is a legitimate marketing email. "
-        "If phishing/scam, include one-sentence advice. "
-        "In most cases, advice should be simple, eg: Ignore the email, delete it, or do not click any links. "
-        "Only provide additional advice if you think it is necessary. "
-        "Respond with a JSON object with keys 'classification', 'reason', and 'advice'. "
-        "Do not output any additional text."
-    )
+    with open (Path(__file__).resolve().parent / 'system-prompt.txt', 'r', encoding='utf-8') as f:
+        system_prompt = f.read().strip()
+
     # Call Azure AI and handle errors
     try:
         response = client.complete(
@@ -195,7 +190,7 @@ def move_email(imap_client, uid, result):
     # Skip moving if not phishing
     if cls != 'phishing':
         return
-    
+
     try:
         imap_client.move(uid, MOVE_TO_FOLDER)
         logging.info("Moved UID %s to folder '%s'", uid, MOVE_TO_FOLDER)
@@ -207,7 +202,7 @@ def process_single_email(imap_client, uid):
     try:
         # Fetch email data with error handling for missing UIDs
         fetch_result = imap_client.fetch(uid, ['BODY.PEEK[]'])
-        
+
         data = fetch_result[uid]
         raw = data.get(b'BODY[]')
         if not isinstance(raw, (bytes, bytearray)):
@@ -240,7 +235,6 @@ def process_single_email(imap_client, uid):
     except Exception as e:
         logging.error("Error processing email UID %s: %s", uid, str(e))
         logging.error("Exception type: %s", type(e).__name__)
-        import traceback
         logging.error("Traceback: %s", traceback.format_exc())
         # Still mark as processed to avoid reprocessing failures
         try:
@@ -319,16 +313,16 @@ if __name__ == '__main__':
 
                 except Exception as e:
                     logging.error("Error in IDLE loop: %s; reconnecting in %ds", e, backoff)
-                    
+
                     # Close old connection
                     try:
                         imap_client.logout()
                     except:
                         pass
-                    
+
                     time.sleep(backoff)
                     backoff = min(backoff * 2, max_backoff)
-                    
+
                     # Reconnect
                     try:
                         if IMAP_AUTH_METHOD == 'SSL':
@@ -343,7 +337,7 @@ if __name__ == '__main__':
                         logging.info("Reconnected to IMAP server")
                     except Exception as reconnect_error:
                         logging.error("Failed to reconnect: %s", reconnect_error)
-                        
+
         except KeyboardInterrupt:
             logging.info("Received interrupt signal, shutting down...")
 
