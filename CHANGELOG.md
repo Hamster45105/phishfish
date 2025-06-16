@@ -1,4 +1,4 @@
-# v0.1.4-beta
+# v0.1.4-beta (2025-06-16)
 
 **New**
 - Added option to configure log level (udate `LOG_LEVEL` in your .env file)
