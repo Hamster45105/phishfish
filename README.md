@@ -6,7 +6,7 @@
 
 **Self-hosted AI-powered email phishing protection**
 
-PhishFish monitors your email in real-time and uses free access to the GitHub models API to utilise LLMs and detect phishing attempts, and send notifcations to ntfy.sh when a phishing email is found. 
+PhishFish monitors your email in real-time and uses free access to the GitHub models API to detect phishing emails. When a phishing email is detected, PhishFish can either send a notifcation to your phone or move it to a different folder (or both!).
 
 ## 🚀 Quick Start with Docker
 
@@ -14,7 +14,7 @@ PhishFish monitors your email in real-time and uses free access to the GitHub mo
 - Docker installed
 - Email account with IMAP access
 - GitHub token for AI models
-- ntfy.sh topic for notifications
+- [ntfy.sh](https://ntfy.sh) topic for notifications, if desired
 
 ### Setup and Run
 ```bash
