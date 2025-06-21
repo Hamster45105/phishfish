@@ -41,7 +41,7 @@ Configure your email server connection to monitor for new emails.
 | `IMAP_USER` | ⚠️ | *None* | Your email username/address |
 | `IMAP_PASS` | ⚠️ | *None* | Your email password or app password |
 | `IMAP_PORT` | ❌ | `993` | IMAP server port (usually 993 for SSL) |
-| `IMAP_ENCRYPTION_METHOD` | ❌ | `SSL` | Authentication method: `SSL`, `TLS`, `STARTTLS`, or `NONE` |
+| `IMAP_ENCRYPTION_METHOD` | ❌ | `SSL` | Encryption method: `SSL`, `TLS`, `STARTTLS`, or `NONE` |
 | `MAILBOX` | ❌ | `INBOX` | Mailbox folder to monitor for new emails |
 
 #### Known Email Settings
