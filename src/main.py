@@ -208,7 +208,7 @@ def process_single_email(imap_client, uid):
         if not isinstance(raw, (bytes, bytearray)):
             logging.warning("Skipping UID %s: invalid format", uid)
             # Only try to flag if the UID still exists
-            imap_client.add_flags(uid, 'StopThePhish_Processed')
+            imap_client.add_flags(uid, 'PhishFish_Processed')
             return
 
         metadata, body, urls = parse_email_bytes(raw)
@@ -222,7 +222,7 @@ def process_single_email(imap_client, uid):
 
         # Mark as processed (but keep unread if legitimate)
         try:
-            imap_client.add_flags(uid, 'StopThePhish_Processed')
+            imap_client.add_flags(uid, 'PhishFish_Processed')
             # Verify the flag was set
             flags_data = imap_client.fetch(uid, ['FLAGS'])[uid]
             current_flags = flags_data.get(b'FLAGS', [])
@@ -238,13 +238,13 @@ def process_single_email(imap_client, uid):
         logging.error("Traceback: %s", traceback.format_exc())
         # Still mark as processed to avoid reprocessing failures
         try:
-            imap_client.add_flags(uid, 'StopThePhish_Processed')
+            imap_client.add_flags(uid, 'PhishFish_Processed')
         except Exception as flag_error:
             logging.warning("Could not flag UID %s as processed after error: %s - email may no longer exist", uid, flag_error)
 
 def process_unseen(client_imap):
     """Find all UNSEEN and unprocessed messages and process them immediately."""
-    uids = client_imap.search(['UNSEEN', 'NOT', 'KEYWORD', 'StopThePhish_Processed'])
+    uids = client_imap.search(['UNSEEN', 'NOT', 'KEYWORD', 'PhishFish_Processed'])
     logging.info("Found %d unseen, unprocessed messages in '%s'", len(uids), MAILBOX)
     for uid in uids:
         process_single_email(client_imap, uid)
