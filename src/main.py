@@ -249,6 +249,14 @@ def process_unseen(client_imap):
     for uid in uids:
         process_single_email(client_imap, uid)
 
+def print_available_folders(imap_client):
+    """Print all available IMAP folders for the current account."""
+    folders = imap_client.list_folders()
+    logging.info("Available IMAP folders:")
+    for flags, separator, folder_name in folders:
+        logging.info("  - %s", folder_name)
+    return folders
+
 if __name__ == '__main__':
     def monitor_mailbox_idle():
         """Connect once, then enter IMAP IDLE to process new mail immediately."""
@@ -264,6 +272,10 @@ if __name__ == '__main__':
             else:
                 imap_client = IMAPClient(IMAP_HOST, port=IMAP_PORT, ssl=False)
             imap_client.login(IMAP_USER, IMAP_PASS)
+            
+            # Print all available folders after login
+            print_available_folders(imap_client)
+            
             imap_client.select_folder(MAILBOX)
             logging.info("Authenticated – entering IDLE")
 
