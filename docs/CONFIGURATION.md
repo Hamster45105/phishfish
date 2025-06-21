@@ -41,7 +41,7 @@ Configure your email server connection to monitor for new emails.
 | `IMAP_USER` | ⚠️ | *None* | Your email username/address |
 | `IMAP_PASS` | ⚠️ | *None* | Your email password or app password |
 | `IMAP_PORT` | ❌ | `993` | IMAP server port (usually 993 for SSL) |
-| `IMAP_AUTH_METHOD` | ❌ | `SSL` | Authentication method: `SSL`, `STARTTLS`, or `PLAIN` |
+| `IMAP_ENCRYPTION_METHOD` | ❌ | `SSL` | Authentication method: `SSL`, `TLS`, `STARTTLS`, or `NONE` |
 | `MAILBOX` | ❌ | `INBOX` | Mailbox folder to monitor for new emails |
 
 #### Known Email Settings
@@ -56,7 +56,7 @@ IMAP_HOST=imap.gmail.com
 IMAP_USER=your-email@gmail.com
 IMAP_PASS=your-app-password
 IMAP_PORT=993
-IMAP_AUTH_METHOD=SSL
+IMAP_ENCRYPTION_METHOD=SSL
 MAILBOX=INBOX
 ```
 

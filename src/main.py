@@ -41,7 +41,7 @@ IMAP_USER = os.environ['IMAP_USER']
 IMAP_PASS = os.environ['IMAP_PASS']
 IMAP_PORT = int(os.getenv('IMAP_PORT', '993'))
 
-IMAP_AUTH_METHOD = os.getenv('IMAP_AUTH_METHOD', 'SSL').upper()
+IMAP_ENCRYPTION_METHOD = os.getenv('IMAP_ENCRYPTION_METHOD', 'SSL').upper()
 MAILBOX = os.getenv('IMAP_MAILBOX', 'INBOX')
 
 # ntfy settings
@@ -255,10 +255,10 @@ if __name__ == '__main__':
         logging.info('Starting IMAP IDLE monitor')
         try:
             # Establish main IMAP connection for IDLE
-            logging.info("Connecting to IMAP %s:%d using %s", IMAP_HOST, IMAP_PORT, IMAP_AUTH_METHOD)
-            if IMAP_AUTH_METHOD == 'SSL':
+            logging.info("Connecting to IMAP %s:%d using %s", IMAP_HOST, IMAP_PORT, IMAP_ENCRYPTION_METHOD)
+            if IMAP_ENCRYPTION_METHOD in ('SSL', 'TLS'):
                 imap_client = IMAPClient(IMAP_HOST, port=IMAP_PORT, ssl=True)
-            elif IMAP_AUTH_METHOD == 'STARTTLS':
+            elif IMAP_ENCRYPTION_METHOD == 'STARTTLS':
                 imap_client = IMAPClient(IMAP_HOST, port=IMAP_PORT, ssl=False)
                 imap_client.starttls()
             else:
@@ -325,9 +325,9 @@ if __name__ == '__main__':
 
                     # Reconnect
                     try:
-                        if IMAP_AUTH_METHOD == 'SSL':
+                        if IMAP_ENCRYPTION_METHOD in ('SSL', 'TLS'):
                             imap_client = IMAPClient(IMAP_HOST, port=IMAP_PORT, ssl=True)
-                        elif IMAP_AUTH_METHOD == 'STARTTLS':
+                        elif IMAP_ENCRYPTION_METHOD == 'STARTTLS':
                             imap_client = IMAPClient(IMAP_HOST, port=IMAP_PORT, ssl=False)
                             imap_client.starttls()
                         else:
