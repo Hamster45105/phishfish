@@ -7,7 +7,6 @@ import json
 import logging
 import time
 import urllib.parse
-import webbrowser
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -50,7 +49,6 @@ class OAuthHandler:
             "scope": " ".join(self.scopes),
             "response_type": "code",
             "access_type": "offline",  # For refresh tokens
-            "prompt": "consent",  # Force consent to ensure refresh token
         }
 
         query_string = urllib.parse.urlencode(params)
@@ -307,15 +305,8 @@ class OAuthHandler:
             auth_url = self.get_authorization_url()
 
             logging.info("Starting interactive OAuth authentication")
-            logging.info("Opening browser for authorization at: %s", auth_url)
-
-            # Open browser first, then start server
-            try:
-                webbrowser.open(auth_url)
-                logging.info("Browser opened successfully")
-            except (OSError, webbrowser.Error) as e:
-                logging.warning("Could not open browser automatically: %s", e)
-                logging.info("Please manually visit: %s", auth_url)
+            logging.info("Please visit the following URL in your browser to authorize:")
+            logging.info("%s", auth_url)
 
             # Start local server and wait for callback
             try:
