@@ -69,7 +69,6 @@ Microsoft requires OAuth 2.0 authentication.
 
 **Prerequisites:**
 - [Register an application](https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) in Azure AD
-- Add redirect URI: `http://localhost:8080/callback` (replace `8080` with a custom port, if applicable)
 - Grant `IMAP.AccessAsUser.All` and `offline_access` permissions
 
 **Configuration:**
