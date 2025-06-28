@@ -6,8 +6,8 @@ This guide provides step-by-step configuration examples for popular email provid
 
 | Provider | Setup Guide |
 |----------|-------------|
-| <img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/gmail.svg" width="20" height="20"> Gmail | [Configuration →](#gmail) |
-| <img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/microsoftoutlook.svg" width="20" height="20"> Outlook/Microsoft | [Configuration →](#outlook--microsoft) |
+| Gmail <img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail" align=left width=19 height=19> | [Configuration →](#gmail) |
+| Outlook/Microsoft | [Configuration →](#outlook--microsoft) |
 
 ---
 
