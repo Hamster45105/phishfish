@@ -1,0 +1,30 @@
+[tool.ruff]
+# Same as Black
+line-length = 88
+indent-width = 4
+
+# Target Python 3.11+
+target-version = "py311"
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Use spaces around the assignment operator for default arguments
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # Pyflakes
+    "W",   # pycodestyle warnings  
+    "I",   # isort
+]
+
+# Let the formatter handle line length instead of linter
+ignore = [
+    "E501",  # Line too long
+]
+
+# Allow auto-fixing all selected rules
+fixable = ["ALL"]
