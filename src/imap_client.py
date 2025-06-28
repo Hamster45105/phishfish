@@ -48,13 +48,6 @@ class EmailProcessor:
     def _save_processed_uids(self):
         """Save processed UIDs to file."""
         try:
-            # Keep only recent UIDs to prevent file from growing too large
-            max_uids_to_keep = 10000
-            if len(self._processed_uids) > max_uids_to_keep:
-                # Keep the highest UIDs (most recent)
-                sorted_uids = sorted(self._processed_uids, reverse=True)
-                self._processed_uids = set(sorted_uids[:max_uids_to_keep])
-
             data = {'processed_uids': list(self._processed_uids)}
             with open(self.processed_uids_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f)
@@ -237,6 +230,9 @@ class EmailProcessor:
 
     def process_unseen(self):
         """Find all UNSEEN messages and process them if not already processed."""
+        # Clean up stale processed UIDs periodically
+        self._cleanup_processed_uids()
+
         # Get all unseen messages (compatible with all IMAP servers)
         all_unseen_uids = self.imap_client.search("UNSEEN")
 
@@ -337,3 +333,23 @@ class EmailProcessor:
                     self.imap_client.logout()
                 except:
                     pass
+
+    def _cleanup_processed_uids(self):
+        """Remove processed UIDs that are no longer unread (read or deleted emails)."""
+        if not self._processed_uids:
+            return
+
+        try:
+            # Get all unread messages
+            all_unread_uids = set(self.imap_client.search("UNSEEN"))
+
+            # Find processed UIDs that are no longer unread
+            stale_uids = self._processed_uids - all_unread_uids
+
+            if stale_uids:
+                logging.info("Removing %d stale UIDs from processed list", len(stale_uids))
+                self._processed_uids -= stale_uids
+                self._save_processed_uids()
+
+        except Exception as e:
+            logging.warning("Failed to cleanup processed UIDs: %s", e)
