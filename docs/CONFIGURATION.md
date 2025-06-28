@@ -31,47 +31,45 @@ GitHub models is free for all users, but with [rate limits](https://docs.github.
 
 ---
 
-### IMAP Email Settings
+### Email Connection & Authentication Settings
 
-Configure your email server connection to monitor for new emails.
+Configure your email server connection and authentication method.
+
+#### Basic IMAP Settings
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `IMAP_HOST` | ⚠️ | *None* | Your email server hostname |
 | `IMAP_USER` | ⚠️ | *None* | Your email username/address |
-| `IMAP_PASS` | ⚠️ | *None* | Your email password or app password |
 | `IMAP_PORT` | ❌ | `993` | IMAP server port (usually 993 for SSL) |
 | `IMAP_ENCRYPTION_METHOD` | ❌ | `SSL` | Encryption method: `SSL`, `TLS`, `STARTTLS`, or `NONE` |
 | `MAILBOX` | ❌ | `INBOX` | Mailbox folder to monitor for new emails |
 
-#### Known Email Settings
+#### Authentication Methods
 
-<details>
-<summary><strong>Gmail</strong></summary>
+**Option 1: OAuth 2.0**
 
-#### Config
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `USE_OAUTH` | ❌ | `false` | Enable OAuth 2.0 authentication instead of password |
+| `OAUTH_CLIENT_ID` | ⚠️* | *None* | OAuth 2.0 client ID from your provider |
+| `OAUTH_CLIENT_SECRET` | ⚠️* | *None* | OAuth 2.0 client secret from your provider |
+| `OAUTH_AUTH_URL` | ⚠️* | *None* | OAuth authorization endpoint URL |
+| `OAUTH_TOKEN_URL` | ⚠️* | *None* | OAuth token endpoint URL |
+| `OAUTH_SCOPE` | ⚠️* | *None* | OAuth scopes (comma-separated) |
+| `OAUTH_CALLBACK_PORT` | ❌ | `8080` | Port for OAuth callback server during authentication |
 
-```bash
-IMAP_HOST=imap.gmail.com
-IMAP_USER=your-email@gmail.com
-IMAP_PASS=your-app-password
-IMAP_PORT=993
-IMAP_ENCRYPTION_METHOD=SSL
-MAILBOX=INBOX
-```
+*Required when `USE_OAUTH=true`
 
-#### Tips
+> **Note**: When using OAuth, ensure the Docker port mapping matches your `OAUTH_CALLBACK_PORT` setting. For example, if you set `OAUTH_CALLBACK_PORT=9090`, use `-p 9090:9090` in your Docker run command.
 
-- Enable [2-factor authentication](https://support.google.com/accounts/answer/185839) for your account (required)
-- [Generate an app password](https://myaccount.google.com/apppasswords) (not your regular password)
-</details>
+**Option 2: Password/App Password**
 
-<details>
-<summary><strong>Outlook</strong></summary>
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `IMAP_PASS` | ⚠️** | *None* | Your email password or app password |
 
-Currently, Outlook accounts are not supported, as [Microsoft does not support Basic Authentication](https://support.microsoft.com/en-us/office/modern-authentication-methods-now-needed-to-continue-syncing-outlook-email-in-non-microsoft-email-apps-c5d65390-9676-4763-b41f-d7986499a90d). Support for Modern Authentication may be added in the future.
-
-</details>
+**Required when `USE_OAUTH=false`
 
 ---
 

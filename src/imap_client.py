@@ -16,6 +16,7 @@ from ai_classifier import classifier
 from config import config
 from email_parser import format_email, parse_email_bytes
 from notifications import notify_user
+from oauth_handler import OAuthError, create_oauth_handler
 
 
 class EmailProcessor:
@@ -93,8 +94,73 @@ class EmailProcessor:
                 config.IMAP_HOST, port=config.IMAP_PORT, ssl=False
             )
 
-        self.imap_client.login(config.IMAP_USER, config.IMAP_PASS)
+        # Authenticate with OAuth or password
+        if config.USE_OAUTH:
+            self._authenticate_oauth()
+        else:
+            self.imap_client.login(config.IMAP_USER, config.IMAP_PASS)
+
         self.imap_client.select_folder(config.MAILBOX)
+
+    def _authenticate_oauth(self):
+        """Authenticate using OAuth 2.0."""
+        try:
+            # Parse scopes from config
+            scopes = [scope.strip() for scope in config.OAUTH_SCOPE.split(",")]
+
+            oauth_handler = create_oauth_handler(
+                config.OAUTH_CLIENT_ID,
+                config.OAUTH_CLIENT_SECRET,
+                config.OAUTH_AUTH_URL,
+                config.OAUTH_TOKEN_URL,
+                scopes,
+                config.OAUTH_CALLBACK_PORT
+            )
+
+            # Try to get a valid access token
+            access_token = oauth_handler.get_valid_access_token()
+
+            if not access_token:
+                logging.info("No valid OAuth token found, starting interactive authentication...")
+                if not oauth_handler.authenticate_interactive():
+                    raise OAuthError("Interactive OAuth authentication failed")
+
+                access_token = oauth_handler.get_valid_access_token()
+                if not access_token:
+                    raise OAuthError("Failed to obtain access token after authentication")
+
+            # Use the access token for OAuth2 authentication
+            logging.info("Authenticating with OAuth 2.0 access token...")
+            logging.debug("User: %s", config.IMAP_USER)
+
+            # Use IMAPClient's oauth2_login method directly with the access token
+            try:
+                # IMAPClient.oauth2_login expects just the access token, not a pre-formatted auth string
+                self.imap_client.oauth2_login(config.IMAP_USER, access_token, mech='XOAUTH2')
+                logging.info("OAuth 2.0 authentication successful")
+            except Exception as oauth_error:
+                logging.error("OAuth2 login failed: %s", oauth_error)
+                logging.error("Error type: %s", type(oauth_error).__name__)
+
+                # If the direct approach fails, try with a manual auth string for debugging
+                logging.info("Attempting manual OAuth string authentication...")
+                oauth_string = oauth_handler.get_oauth_string(config.IMAP_USER)
+                logging.debug("OAuth string length: %d", len(oauth_string))
+
+                # Try the oauth2_login with the manual string
+                self.imap_client.oauth2_login(config.IMAP_USER, oauth_string, mech='XOAUTH2')
+                logging.info("Manual OAuth string authentication successful")
+
+            logging.info("Successfully authenticated with OAuth 2.0")
+
+        except OAuthError as e:
+            logging.error("OAuth authentication failed: %s", e)
+            raise LoginError(f"OAuth authentication failed: {e}") from e
+        except Exception as e:
+            logging.error("Unexpected error during OAuth authentication: %s", e)
+            logging.error("Error type: %s", type(e).__name__)
+            logging.error("Error details: %s", str(e))
+            raise LoginError(f"OAuth authentication error: {e}") from e
 
     def print_available_folders(self):
         """Print all available IMAP folders for the current account."""
