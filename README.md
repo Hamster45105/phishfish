@@ -32,6 +32,7 @@ docker run -d \
   --name phishfish \
   --restart unless-stopped \
   --env-file .env \
+  -v $(pwd)/.data:/usr/src/app/.data \
   ghcr.io/hamster45105/phishfish:latest
 ```
 
@@ -52,6 +53,7 @@ docker run -d \
   --name phishfish \
   --restart unless-stopped \
   --env-file .env \
+  -v $(pwd)/.data:/usr/src/app/.data \
   ghcr.io/hamster45105/phishfish:latest
 ```
 

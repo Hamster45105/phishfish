@@ -1,6 +1,9 @@
 # Environment and secrets
 .env
 
+# Data directory (OAuth tokens, processed UIDs)
+.data/
+
 # Python
 __pycache__/
 *.py[cod]

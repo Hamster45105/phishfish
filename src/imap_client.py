@@ -2,10 +2,12 @@
 IMAP client operations for PhishFish application.
 """
 
+import json
 import logging
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from imapclient import IMAPClient
 from imapclient.exceptions import LoginError
@@ -22,6 +24,51 @@ class EmailProcessor:
     def __init__(self):
         """Initialize the email processor."""
         self.imap_client = None
+
+        # Use .data directory for persistent storage (both local and Docker)
+        data_dir = Path(".data")
+        self.processed_uids_file = data_dir / "processed_uids.json"
+        self.processed_uids_file.parent.mkdir(exist_ok=True)
+        self._processed_uids = self._load_processed_uids()
+
+    def _load_processed_uids(self) -> set:
+        """Load processed UIDs from file."""
+        try:
+            if self.processed_uids_file.exists():
+                with open(self.processed_uids_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    # Convert to set and ensure all are integers
+                    return set(int(uid) for uid in data.get('processed_uids', []))
+            return set()
+        except (json.JSONDecodeError, ValueError, OSError) as e:
+            logging.warning("Could not load processed UIDs file: %s", e)
+            return set()
+
+    def _save_processed_uids(self):
+        """Save processed UIDs to file."""
+        try:
+            # Keep only recent UIDs to prevent file from growing too large
+            max_uids_to_keep = 10000
+            if len(self._processed_uids) > max_uids_to_keep:
+                # Keep the highest UIDs (most recent)
+                sorted_uids = sorted(self._processed_uids, reverse=True)
+                self._processed_uids = set(sorted_uids[:max_uids_to_keep])
+
+            data = {'processed_uids': list(self._processed_uids)}
+            with open(self.processed_uids_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f)
+            logging.debug("Saved %d processed UIDs to file", len(self._processed_uids))
+        except OSError as e:
+            logging.error("Could not save processed UIDs file: %s", e)
+
+    def _is_uid_processed(self, uid: int) -> bool:
+        """Check if a UID has been processed."""
+        return uid in self._processed_uids
+
+    def _mark_uid_processed(self, uid: int):
+        """Mark a UID as processed."""
+        self._processed_uids.add(uid)
+        self._save_processed_uids()
 
     def connect(self):
         """Establish IMAP connection."""
@@ -81,6 +128,11 @@ class EmailProcessor:
 
     def process_single_email(self, uid):
         """Process a single email UID - fetch, classify, and notify."""
+        # Skip if already processed
+        if self._is_uid_processed(uid):
+            logging.debug("UID %s already processed, skipping", uid)
+            return
+
         try:
             # Fetch email data with error handling for missing UIDs
             fetch_result = self.imap_client.fetch(uid, ["BODY.PEEK[]"])
@@ -89,8 +141,8 @@ class EmailProcessor:
             raw = data.get(b"BODY[]")
             if not isinstance(raw, (bytes, bytearray)):
                 logging.warning("Skipping UID %s: invalid format", uid)
-                # Only try to flag if the UID still exists
-                self.imap_client.add_flags(uid, "PhishFish_Processed")
+                # Mark as processed to avoid repeated attempts
+                self._mark_uid_processed(uid)
                 return
 
             metadata, body, urls = parse_email_bytes(raw)
@@ -104,19 +156,9 @@ class EmailProcessor:
 
             notify_user(metadata["from"], metadata["subject"], result)
 
-            # Mark as processed (but keep unread if legitimate)
-            try:
-                self.imap_client.add_flags(uid, "PhishFish_Processed")
-                # Verify the flag was set
-                flags_data = self.imap_client.fetch(uid, ["FLAGS"])[uid]
-                current_flags = flags_data.get(b"FLAGS", [])
-                logging.info("UID %s processed and flagged: %s", uid, current_flags)
-            except Exception as e:
-                logging.warning(
-                    "Could not flag UID %s as processed: %s - email may no longer exist",
-                    uid,
-                    e,
-                )
+            # Mark as processed
+            self._mark_uid_processed(uid)
+            logging.info("UID %s processed and marked as complete", uid)
 
             self.move_email(uid, result)
 
@@ -125,24 +167,22 @@ class EmailProcessor:
             logging.error("Exception type: %s", type(e).__name__)
             logging.error("Traceback: %s", traceback.format_exc())
             # Still mark as processed to avoid reprocessing failures
-            try:
-                self.imap_client.add_flags(uid, "PhishFish_Processed")
-            except Exception as flag_error:
-                logging.warning(
-                    "Could not flag UID %s as processed after error: %s - email may no longer exist",
-                    uid,
-                    flag_error,
-                )
+            self._mark_uid_processed(uid)
 
     def process_unseen(self):
-        """Find all UNSEEN and unprocessed messages and process them immediately."""
-        uids = self.imap_client.search(
-            ["UNSEEN", "NOT", "KEYWORD", "PhishFish_Processed"]
-        )
+        """Find all UNSEEN messages and process them if not already processed."""
+        # Get all unseen messages (compatible with all IMAP servers)
+        all_unseen_uids = self.imap_client.search("UNSEEN")
+
+        # Filter out already processed ones
+        unprocessed_uids = [uid for uid in all_unseen_uids if not self._is_uid_processed(uid)]
+
         logging.info(
-            "Found %d unseen, unprocessed messages in '%s'", len(uids), config.MAILBOX
+            "Found %d unseen messages, %d unprocessed in '%s'",
+            len(all_unseen_uids), len(unprocessed_uids), config.MAILBOX
         )
-        for uid in uids:
+
+        for uid in unprocessed_uids:
             self.process_single_email(uid)
 
     def monitor_mailbox_idle(self):
