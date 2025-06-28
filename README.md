@@ -40,7 +40,7 @@ docker run -d \
 > **Note**: The `-p 8080:8080` port mapping is required when using OAuth authentication (`USE_OAUTH=true`). PhishFish runs a temporary local server on port 8080 (or the port specified by `OAUTH_CALLBACK_PORT`) to handle the OAuth callback during the initial authentication process. If you're using password authentication only, you don't need this line. If you change the callback port, update the port mapping accordingly (e.g., `-p 9090:9090` for `OAUTH_CALLBACK_PORT=9090`).
 
 
-[Configuring your .env file](docs/CONFIGURATION.md) • [Known Email Provider Configurations](docs/KNOWN_SETUPS.md)
+[Configuring your .env file](docs/CONFIGURATION.md) • [Known Email Provider Configurations](docs/KNOWN_CONFIGS.md)
 
 ### Updating
 
