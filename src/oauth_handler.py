@@ -20,7 +20,15 @@ class OAuthError(Exception):
 class OAuthHandler:
     """Handles OAuth 2.0 authentication flow for email provider."""
 
-    def __init__(self, client_id: str, client_secret: str, auth_uri: str, token_uri: str, scopes: list, callback_port: int = 8080):
+    def __init__(
+        self,
+        client_id: str,
+        client_secret: str,
+        auth_uri: str,
+        token_uri: str,
+        scopes: list,
+        callback_port: int = 8080,
+    ):
         """
         Initialize OAuth handler.
         """
@@ -71,15 +79,12 @@ class OAuthHandler:
             "Accept": "application/json",
         }
 
-        response = requests.post(
-            self.token_uri,
-            data=data,
-            headers=headers,
-            timeout=30
-        )
+        response = requests.post(self.token_uri, data=data, headers=headers, timeout=30)
 
         if response.status_code != 200:
-            raise OAuthError(f"Token exchange failed: {response.status_code} {response.text}")
+            raise OAuthError(
+                f"Token exchange failed: {response.status_code} {response.text}"
+            )
 
         tokens = response.json()
 
@@ -108,15 +113,12 @@ class OAuthHandler:
             "Accept": "application/json",
         }
 
-        response = requests.post(
-            self.token_uri,
-            data=data,
-            headers=headers,
-            timeout=30
-        )
+        response = requests.post(self.token_uri, data=data, headers=headers, timeout=30)
 
         if response.status_code != 200:
-            raise OAuthError(f"Token refresh failed: {response.status_code} {response.text}")
+            raise OAuthError(
+                f"Token refresh failed: {response.status_code} {response.text}"
+            )
 
         tokens = response.json()
 
@@ -243,12 +245,14 @@ class OAuthHandler:
                     self.send_response(400)
                     self.send_header("Content-type", "text/html")
                     self.end_headers()
-                    self.wfile.write(f"""
+                    self.wfile.write(
+                        f"""
                     <html><body>
                     <h2>Authorization failed!</h2>
                     <p>Error: {server_error}</p>
                     </body></html>
-                    """.encode())
+                    """.encode()
+                    )
                 else:
                     self.send_response(400)
                     self.send_header("Content-type", "text/html")
@@ -337,8 +341,17 @@ class OAuthHandler:
             logging.error("Error revoking tokens: %s", e)
 
 
-def create_oauth_handler(client_id: str, client_secret: str, auth_uri: str, token_uri: str, scopes: list, callback_port: int = 8080) -> OAuthHandler:
+def create_oauth_handler(
+    client_id: str,
+    client_secret: str,
+    auth_uri: str,
+    token_uri: str,
+    scopes: list,
+    callback_port: int = 8080,
+) -> OAuthHandler:
     """
     Function to create OAuth handler.
     """
-    return OAuthHandler(client_id, client_secret, auth_uri, token_uri, scopes, callback_port)
+    return OAuthHandler(
+        client_id, client_secret, auth_uri, token_uri, scopes, callback_port
+    )

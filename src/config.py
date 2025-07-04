@@ -64,10 +64,14 @@ class Config:
 
     # Sender lists - Dangerous and Safe
     DANGEROUS_SENDERS = [
-        sender.strip().lower() for sender in os.getenv("DANGEROUS_SENDERS", "").split(",") if sender.strip()
+        sender.strip().lower()
+        for sender in os.getenv("DANGEROUS_SENDERS", "").split(",")
+        if sender.strip()
     ]
     SAFE_SENDERS = [
-        sender.strip().lower() for sender in os.getenv("SAFE_SENDERS", "").split(",") if sender.strip()
+        sender.strip().lower()
+        for sender in os.getenv("SAFE_SENDERS", "").split(",")
+        if sender.strip()
     ]
 
     @classmethod
@@ -86,7 +90,8 @@ class Config:
             logging.info(
                 "Dangerous senders list configured with %d entries: %s",
                 len(cls.DANGEROUS_SENDERS),
-                ", ".join(cls.DANGEROUS_SENDERS[:5]) + ("..." if len(cls.DANGEROUS_SENDERS) > 5 else "")
+                ", ".join(cls.DANGEROUS_SENDERS[:5])
+                + ("..." if len(cls.DANGEROUS_SENDERS) > 5 else ""),
             )
         else:
             logging.info("No dangerous senders configured")
@@ -95,7 +100,8 @@ class Config:
             logging.info(
                 "Safe senders list configured with %d entries: %s",
                 len(cls.SAFE_SENDERS),
-                ", ".join(cls.SAFE_SENDERS[:5]) + ("..." if len(cls.SAFE_SENDERS) > 5 else "")
+                ", ".join(cls.SAFE_SENDERS[:5])
+                + ("..." if len(cls.SAFE_SENDERS) > 5 else ""),
             )
         else:
             logging.info("No safe senders configured")
@@ -107,15 +113,19 @@ class Config:
                 logging.warning(
                     "Sender list conflicts detected: %s appear in both dangerous and safe lists. "
                     "Dangerous classification will take precedence.",
-                    ", ".join(sorted(conflicts))
+                    ", ".join(sorted(conflicts)),
                 )
 
         # Validate OAuth settings
         if cls.USE_OAUTH:
             if not cls.OAUTH_CLIENT_ID or not cls.OAUTH_CLIENT_SECRET:
-                raise ValueError("OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET must be set when USE_OAUTH is true")
+                raise ValueError(
+                    "OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET must be set when USE_OAUTH is true"
+                )
             if not cls.OAUTH_AUTH_URL or not cls.OAUTH_TOKEN_URL:
-                raise ValueError("OAUTH_AUTH_URL and OAUTH_TOKEN_URL must be set when USE_OAUTH is true")
+                raise ValueError(
+                    "OAUTH_AUTH_URL and OAUTH_TOKEN_URL must be set when USE_OAUTH is true"
+                )
             if not cls.OAUTH_SCOPE:
                 raise ValueError("OAUTH_SCOPE must be set when USE_OAUTH is true")
         else:

@@ -70,7 +70,7 @@ def extract_email_address(sender_field):
         return ""
 
     # Try to match email in angle brackets first
-    match = re.search(r'<([^>]+)>', sender_field)
+    match = re.search(r"<([^>]+)>", sender_field)
     if match:
         return match.group(1).strip().lower()
 
@@ -81,9 +81,9 @@ def extract_email_address(sender_field):
 
 def extract_domain(email_address):
     """Extract domain from email address."""
-    if not email_address or '@' not in email_address:
+    if not email_address or "@" not in email_address:
         return ""
-    return email_address.split('@')[1].lower()
+    return email_address.split("@")[1].lower()
 
 
 def check_sender_classification(sender_field):
@@ -108,31 +108,43 @@ def check_sender_classification(sender_field):
 
     # Check dangerous senders
     for dangerous_sender in config.DANGEROUS_SENDERS:
-        if dangerous_sender.startswith('@'):
+        if dangerous_sender.startswith("@"):
             # Domain match
             if domain == dangerous_sender[1:]:
-                dangerous_match = ("phishing", f"Sender domain '{domain}' is in the dangerous list")
+                dangerous_match = (
+                    "phishing",
+                    f"Sender domain '{domain}' is in the dangerous list",
+                )
                 dangerous_match_type = "domain"
                 break
         else:
             # Exact email match
             if email_address == dangerous_sender:
-                dangerous_match = ("phishing", f"Sender '{email_address}' is in the dangerous list")
+                dangerous_match = (
+                    "phishing",
+                    f"Sender '{email_address}' is in the dangerous list",
+                )
                 dangerous_match_type = "email"
                 break
 
     # Check safe senders
     for safe_sender in config.SAFE_SENDERS:
-        if safe_sender.startswith('@'):
+        if safe_sender.startswith("@"):
             # Domain match
             if domain == safe_sender[1:]:
-                safe_match = ("legitimate", f"Sender domain '{domain}' is in the safe list")
+                safe_match = (
+                    "legitimate",
+                    f"Sender domain '{domain}' is in the safe list",
+                )
                 safe_match_type = "domain"
                 break
         else:
             # Exact email match
             if email_address == safe_sender:
-                safe_match = ("legitimate", f"Sender '{email_address}' is in the safe list")
+                safe_match = (
+                    "legitimate",
+                    f"Sender '{email_address}' is in the safe list",
+                )
                 safe_match_type = "email"
                 break
 
@@ -147,13 +159,13 @@ def check_sender_classification(sender_field):
                 logging.warning(
                     "Sender conflict detected: Email '%s' is in both dangerous and safe lists. "
                     "Dangerous takes precedence.",
-                    email_address
+                    email_address,
                 )
             else:  # domain
                 logging.warning(
                     "Sender conflict detected: Domain '%s' is in both dangerous and safe lists. "
                     "Dangerous takes precedence.",
-                    domain
+                    domain,
                 )
             return dangerous_match
         else:
@@ -162,14 +174,16 @@ def check_sender_classification(sender_field):
                 logging.warning(
                     "Sender conflict detected: Email '%s' is in dangerous list and domain '%s' is in safe list. "
                     "Specific email takes precedence - classifying as dangerous.",
-                    email_address, domain
+                    email_address,
+                    domain,
                 )
                 return dangerous_match
             else:  # safe_match_type == "email"
                 logging.warning(
                     "Sender conflict detected: Email '%s' is in safe list and domain '%s' is in dangerous list. "
                     "Specific email takes precedence - classifying as safe.",
-                    email_address, domain
+                    email_address,
+                    domain,
                 )
                 return safe_match
 

@@ -36,10 +36,10 @@ class EmailProcessor:
         """Load processed UIDs from file."""
         try:
             if self.processed_uids_file.exists():
-                with open(self.processed_uids_file, 'r', encoding='utf-8') as f:
+                with open(self.processed_uids_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     # Convert to set and ensure all are integers
-                    return set(int(uid) for uid in data.get('processed_uids', []))
+                    return set(int(uid) for uid in data.get("processed_uids", []))
             return set()
         except (json.JSONDecodeError, ValueError, OSError) as e:
             logging.warning("Could not load processed UIDs file: %s", e)
@@ -48,8 +48,8 @@ class EmailProcessor:
     def _save_processed_uids(self):
         """Save processed UIDs to file."""
         try:
-            data = {'processed_uids': list(self._processed_uids)}
-            with open(self.processed_uids_file, 'w', encoding='utf-8') as f:
+            data = {"processed_uids": list(self._processed_uids)}
+            with open(self.processed_uids_file, "w", encoding="utf-8") as f:
                 json.dump(data, f)
             logging.debug("Saved %d processed UIDs to file", len(self._processed_uids))
         except OSError as e:
@@ -107,20 +107,24 @@ class EmailProcessor:
                 config.OAUTH_AUTH_URL,
                 config.OAUTH_TOKEN_URL,
                 scopes,
-                config.OAUTH_CALLBACK_PORT
+                config.OAUTH_CALLBACK_PORT,
             )
 
             # Try to get a valid access token
             access_token = oauth_handler.get_valid_access_token()
 
             if not access_token:
-                logging.info("No valid OAuth token found, starting interactive authentication...")
+                logging.info(
+                    "No valid OAuth token found, starting interactive authentication..."
+                )
                 if not oauth_handler.authenticate_interactive():
                     raise OAuthError("Interactive OAuth authentication failed")
 
                 access_token = oauth_handler.get_valid_access_token()
                 if not access_token:
-                    raise OAuthError("Failed to obtain access token after authentication")
+                    raise OAuthError(
+                        "Failed to obtain access token after authentication"
+                    )
 
             # Use the access token for OAuth2 authentication
             logging.info("Authenticating with OAuth 2.0 access token...")
@@ -129,7 +133,9 @@ class EmailProcessor:
             # Use IMAPClient's oauth2_login method directly with the access token
             try:
                 # IMAPClient.oauth2_login expects just the access token, not a pre-formatted auth string
-                self.imap_client.oauth2_login(config.IMAP_USER, access_token, mech='XOAUTH2')
+                self.imap_client.oauth2_login(
+                    config.IMAP_USER, access_token, mech="XOAUTH2"
+                )
                 logging.info("OAuth 2.0 authentication successful")
             except Exception as oauth_error:
                 logging.error("OAuth2 login failed: %s", oauth_error)
@@ -141,7 +147,9 @@ class EmailProcessor:
                 logging.debug("OAuth string length: %d", len(oauth_string))
 
                 # Try the oauth2_login with the manual string
-                self.imap_client.oauth2_login(config.IMAP_USER, oauth_string, mech='XOAUTH2')
+                self.imap_client.oauth2_login(
+                    config.IMAP_USER, oauth_string, mech="XOAUTH2"
+                )
                 logging.info("Manual OAuth string authentication successful")
 
             logging.info("Successfully authenticated with OAuth 2.0")
@@ -207,7 +215,9 @@ class EmailProcessor:
             metadata, body, urls = parse_email_bytes(raw)
 
             # Check if sender is in dangerous or safe lists first
-            sender_classification, sender_reason = check_sender_classification(metadata["from"])
+            sender_classification, sender_reason = check_sender_classification(
+                metadata["from"]
+            )
 
             if sender_classification:
                 # Pre-classified based on sender lists
@@ -217,7 +227,9 @@ class EmailProcessor:
                 }
                 logging.info(
                     "UID %s pre-classified as '%s' (reason: %s)",
-                    uid, sender_classification, sender_reason
+                    uid,
+                    sender_classification,
+                    sender_reason,
                 )
             else:
                 # Use AI classifier for unknown senders
@@ -252,11 +264,15 @@ class EmailProcessor:
         all_unseen_uids = self.imap_client.search("UNSEEN")
 
         # Filter out already processed ones
-        unprocessed_uids = [uid for uid in all_unseen_uids if not self._is_uid_processed(uid)]
+        unprocessed_uids = [
+            uid for uid in all_unseen_uids if not self._is_uid_processed(uid)
+        ]
 
         logging.info(
             "Found %d unseen messages, %d unprocessed in '%s'",
-            len(all_unseen_uids), len(unprocessed_uids), config.MAILBOX
+            len(all_unseen_uids),
+            len(unprocessed_uids),
+            config.MAILBOX,
         )
 
         for uid in unprocessed_uids:
@@ -362,7 +378,9 @@ class EmailProcessor:
             stale_uids = self._processed_uids - all_unread_uids
 
             if stale_uids:
-                logging.info("Removing %d stale UIDs from processed list", len(stale_uids))
+                logging.info(
+                    "Removing %d stale UIDs from processed list", len(stale_uids)
+                )
                 self._processed_uids -= stale_uids
                 self._save_processed_uids()
 
