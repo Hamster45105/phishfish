@@ -14,7 +14,7 @@ from imapclient.exceptions import LoginError
 
 from ai_classifier import classifier
 from config import config
-from email_parser import format_email, parse_email_bytes
+from email_parser import check_sender_classification, format_email, parse_email_bytes
 from notifications import notify_user
 from oauth_handler import OAuthError, create_oauth_handler
 
@@ -205,13 +205,28 @@ class EmailProcessor:
                 return
 
             metadata, body, urls = parse_email_bytes(raw)
-            preview = format_email(metadata, body, urls)
-            logging.info("Email UID %s sent to AI for classification", uid)
 
-            result = classifier.classify_email(preview)
-            logging.info(
-                "UID %s classified as '%s'", uid, result.get("classification", "")
-            )
+            # Check if sender is in dangerous or safe lists first
+            sender_classification, sender_reason = check_sender_classification(metadata["from"])
+
+            if sender_classification:
+                # Pre-classified based on sender lists
+                result = {
+                    "classification": sender_classification,
+                    "reason": sender_reason,
+                }
+                logging.info(
+                    "UID %s pre-classified as '%s' (reason: %s)",
+                    uid, sender_classification, sender_reason
+                )
+            else:
+                # Use AI classifier for unknown senders
+                preview = format_email(metadata, body, urls)
+                logging.info("Email UID %s sent to AI for classification", uid)
+                result = classifier.classify_email(preview)
+                logging.info(
+                    "UID %s classified as '%s'", uid, result.get("classification", "")
+                )
 
             notify_user(metadata["from"], metadata["subject"], result)
 

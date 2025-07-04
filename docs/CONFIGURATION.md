@@ -108,6 +108,53 @@ NOTIFY_ON=phishing,legitimate
 
 ---
 
+### Sender Lists
+
+Sometimes, you may not want PhishFish sending your emails to the AI for classification. This may be for privacy reasones* or because you know certain domains are safe or dangerous. 
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `DANGEROUS_SENDERS` | ❌ | *None* | Comma-separated list of dangerous senders (auto-classified as phishing) |
+| `SAFE_SENDERS` | ❌ | *None* | Comma-separated list of safe senders (auto-classified as legitimate) |
+
+#### Configuring Sender Lists
+
+You can combine both email addresses and domains:
+```bash
+DANGEROUS_SENDERS=scammer@fake-bank.com,@scam-domain.com
+SAFE_SENDERS=boss@company.com,@localshop.com
+```
+
+#### Conflict Resolution
+
+If a sender appears in both dangerous and safe lists, PhishFish uses the following rules:
+
+1. **Exact Same Entry**: If the exact same entry (email or domain) appears in both lists, **dangerous takes precedence**
+   ```bash
+   DANGEROUS_SENDERS=example@company.com,@suspicious.com
+   SAFE_SENDERS=example@company.com,@trusted.com
+   # Result: example@company.com → dangerous (with warning logged)
+   ```
+
+2. **Different Match Types**: If there's a conflict between email and domain matches, **specific email takes precedence** over domain
+   ```bash
+   DANGEROUS_SENDERS=@company.com
+   SAFE_SENDERS=admin@company.com
+   # Result: admin@company.com → safe (specific email overrides domain)
+   
+   DANGEROUS_SENDERS=admin@company.com
+   SAFE_SENDERS=@company.com
+   # Result: admin@company.com → dangerous (specific email overrides domain)
+   ```
+
+All conflicts are logged with warnings explaining which rule was applied.
+
+> **Note**: Sender lists are checked before AI classification. If a sender is found in either list, the email is instantly classified without using AI, saving processing time and API calls.
+
+\* Realistically, if you use an commercial email service, your emails are probably getting read by an AI anyway.
+
+---
+
 ### Moving Email Settings
 
 PhishFish can move detected phishing emails to a specified folder if you wish. 

@@ -62,6 +62,14 @@ class Config:
     OAUTH_SCOPE = os.getenv("OAUTH_SCOPE", "")
     OAUTH_CALLBACK_PORT = int(os.getenv("OAUTH_CALLBACK_PORT", "8080"))
 
+    # Sender lists - Dangerous and Safe
+    DANGEROUS_SENDERS = [
+        sender.strip().lower() for sender in os.getenv("DANGEROUS_SENDERS", "").split(",") if sender.strip()
+    ]
+    SAFE_SENDERS = [
+        sender.strip().lower() for sender in os.getenv("SAFE_SENDERS", "").split(",") if sender.strip()
+    ]
+
     @classmethod
     def validate(cls):
         """Validate configuration and log warnings for optional settings."""
@@ -72,6 +80,35 @@ class Config:
             logging.warning(
                 "MOVE_TO_FOLDER is not set, emails will not be moved after processing."
             )
+
+        # Log sender list information
+        if cls.DANGEROUS_SENDERS:
+            logging.info(
+                "Dangerous senders list configured with %d entries: %s",
+                len(cls.DANGEROUS_SENDERS),
+                ", ".join(cls.DANGEROUS_SENDERS[:5]) + ("..." if len(cls.DANGEROUS_SENDERS) > 5 else "")
+            )
+        else:
+            logging.info("No dangerous senders configured")
+
+        if cls.SAFE_SENDERS:
+            logging.info(
+                "Safe senders list configured with %d entries: %s",
+                len(cls.SAFE_SENDERS),
+                ", ".join(cls.SAFE_SENDERS[:5]) + ("..." if len(cls.SAFE_SENDERS) > 5 else "")
+            )
+        else:
+            logging.info("No safe senders configured")
+
+        # Check for conflicts between dangerous and safe sender lists
+        if cls.DANGEROUS_SENDERS and cls.SAFE_SENDERS:
+            conflicts = set(cls.DANGEROUS_SENDERS) & set(cls.SAFE_SENDERS)
+            if conflicts:
+                logging.warning(
+                    "Sender list conflicts detected: %s appear in both dangerous and safe lists. "
+                    "Dangerous classification will take precedence.",
+                    ", ".join(sorted(conflicts))
+                )
 
         # Validate OAuth settings
         if cls.USE_OAUTH:
