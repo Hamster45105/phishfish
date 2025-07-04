@@ -40,7 +40,7 @@ def notify_user(sender, subject, result):
         f"REASON: {reason}",
     ]
 
-    if advice:
+    if advice and emoji == "🔴":
         parts.append(f"ADVICE: {advice}")
 
     # Use double line breaks for separation
