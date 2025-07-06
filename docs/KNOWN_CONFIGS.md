@@ -10,13 +10,20 @@ For services that provide both options, only a guide on basic authentication wil
 
 Currently, the OAuth 2.0 integration is experimental in PhishFish, so use at your own risk.
 
+## Contributing
+
+**Don't see your email provider? One of the setups incorrect or could be more detailed?** Help other users by contributing your configuration!
+
+If you've successfully configured PhishFish with an email provider not listed here, or think more information could be added to help people set up PhishFish, please share your setup!
+
 ## Index
 
 | Provider | Setup Guide |
 |----------|-------------|
-| Gmail <img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail" align=left width=19 height=19> | [Configuration →](#gmail) |
-| iCloud <img src="https://cdn.simpleicons.org/icloud/3693F3" alt="iCloud" align=left width=19 height=19> | [Configuration →](#icloud) |
-| Outlook/Microsoft | [Configuration →](#outlook--microsoft) |
+| Gmail <img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail Icon" align=left width=19 height=19> | [Configuration →](#gmail) |
+| iCloud <img src="https://cdn.simpleicons.org/icloud/3693F3" alt="iCloud Icon" align=left width=19 height=19> | [Configuration →](#icloud) |
+| Outlook/Microsoft <img src="https://cdn.jsdelivr.net/npm/simple-icons@v12/icons/microsoftoutlook.svg" alt="Microsoft Outlook Icon" align=left width=19 height=19> | [Configuration →](#outlook--microsoft) |
+| Proton Mail <img src="https://cdn.simpleicons.org/protonmail/6D4AFF" alt="Proton Mail Icon" align=left width=19 height=19> | [Configuration →](#proton-mail) |
 
 ---
 
@@ -88,3 +95,25 @@ OAUTH_TOKEN_URL=https://login.microsoftonline.com/common/oauth2/v2.0/token
 OAUTH_SCOPE=https://outlook.office.com/IMAP.AccessAsUser.All,offline_access
 OAUTH_CALLBACK_PORT=8080
 ```
+
+---
+
+## Proton Mail
+
+Proton Mail requires the [Proton Mail Bridge](https://proton.me/mail/bridge) to access emails via IMAP, as Proton Mail encrypts all emails and doesn't provide direct IMAP access.
+
+**Prerequisites:**
+- [Download and install Proton Bridge](https://proton.me/mail/bridge)
+- A paid Proton Mail subscription (Bridge is not available for free accounts)
+- Configure and start Proton Bridge on your system
+
+**Configuration:**
+```bash
+# IMAP Settings
+IMAP_HOST=127.0.0.1
+IMAP_USER=your-email@proton.me
+IMAP_PASS=your-bridge-app-password
+IMAP_PORT=1143
+IMAP_ENCRYPTION_METHOD=STARTTLS
+```
+
