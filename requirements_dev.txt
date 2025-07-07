@@ -2,4 +2,4 @@ azure-ai-inference==1.0.0b9
 IMAPClient==3.0.1
 python-dotenv==1.1.1
 requests==2.32.4
-ruff==0.12.1
+ruff==0.12.2
