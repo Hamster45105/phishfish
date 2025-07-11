@@ -3,6 +3,7 @@ AI classification functionality for PhishFish application.
 """
 
 import json
+import logging
 from pathlib import Path
 
 from azure.ai.inference import ChatCompletionsClient
@@ -24,8 +25,21 @@ class EmailClassifier:
         self._load_system_prompt()
 
     def _load_system_prompt(self):
-        """Load the system prompt from file."""
-        prompt_path = Path(__file__).resolve().parent / "system-prompt.txt"
+        """Load the system prompt from file, checking for custom prompt first."""
+        # Check for custom prompt in .data directory first
+        custom_prompt_path = Path(".data") / "system-prompt.txt"
+        default_prompt_path = Path(__file__).resolve().parent / "system-prompt.txt"
+        
+        # Ensure .data directory exists
+        custom_prompt_path.parent.mkdir(exist_ok=True)
+        
+        if custom_prompt_path.exists():
+            logging.info("Using custom system prompt from %s", custom_prompt_path)
+            prompt_path = custom_prompt_path
+        else:
+            logging.info("Using default system prompt from %s", default_prompt_path)
+            prompt_path = default_prompt_path
+            
         with open(prompt_path, "r", encoding="utf-8") as f:
             self.system_prompt = f.read().strip()
 

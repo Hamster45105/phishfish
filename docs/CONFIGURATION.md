@@ -29,6 +29,13 @@ GitHub models is free for all users, but with [rate limits](https://docs.github.
 2. Generate a new token with `Models` access
 3. Copy the token to your `.env` file
 
+#### Custom AI Prompts
+You can customize the AI classification prompt by creating a custom prompt file at `.data/system-prompt.txt`.
+
+You can find the default system prompt [here](../src/system-prompt.txt)
+
+**Note**: PhishFish will automatically use `.data/system-prompt.txt` if it exists, otherwise it falls back to the default prompt.
+
 ---
 
 ### Email Connection & Authentication Settings
